@@ -16,6 +16,35 @@ function isChatResult(
   );
 }
 
+// Retry helper for OpenRouter rate limits (429)
+async function sendWithRetry(
+  openrouter: OpenRouter,
+  chatRequest: { model: string; messages: any[]; stream: boolean },
+  maxRetries = 2
+) {
+  let lastError: any;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await openrouter.chat.send({ chatRequest });
+    } catch (error: any) {
+      lastError = error;
+      // Only retry on rate limit (429)
+      if (error?.statusCode === 429 && attempt < maxRetries) {
+        const retryAfter =
+          error?.data$?.error?.metadata?.retry_after_seconds || 5;
+        const delay = Math.max(retryAfter, 5) * 1000;
+        console.log(
+          `Rate limited, retrying in ${delay / 1000}s (attempt ${attempt + 1}/${maxRetries})`
+        );
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
 // Vercel serverless handler for the AIROTIX chatbot.
 // Uses non-streaming mode (reliable on serverless) and formats the
 // response as SSE so the frontend ChatBot works unchanged.
@@ -51,13 +80,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       apiKey: process.env.OPENROUTER_API_KEY,
     });
 
-    // Non-streaming request (reliable on serverless)
-    const response = await openrouter.chat.send({
-      chatRequest: {
-        model: "openai/gpt-oss-20b:free",
-        messages: fullMessages,
-        stream: false,
-      },
+    // Non-streaming request (reliable on serverless) with retry on rate limits
+    const response = await sendWithRetry(openrouter, {
+      model: "openai/gpt-oss-20b:free",
+      messages: fullMessages,
+      stream: false,
     });
 
     // Send the full content as a single SSE chunk
@@ -75,15 +102,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.write("data: [DONE]\n\n");
     res.end();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Chat API error:", error);
+
+    // Build a helpful error message based on the error type
+    let errorMessage = "Failed to get response from AI";
+    if (error?.statusCode === 429) {
+      errorMessage =
+        "The AI service is temporarily rate-limited. Please try again in a moment.";
+    } else if (error?.statusCode === 401 || error?.statusCode === 403) {
+      errorMessage = "The AI service API key is invalid or unauthorized.";
+    } else if (error?.statusCode === 400) {
+      errorMessage = "The AI service rejected the request. Please try a different question.";
+    } else if (error?.message?.includes("fetch failed") || error?.code === "ECONNREFUSED") {
+      errorMessage = "Could not reach the AI service. Please check your connection.";
+    }
 
     // If headers haven't been sent yet, send error as JSON
     if (!res.headersSent) {
-      res.status(500).json({ error: "Failed to get response from AI" });
+      res.status(500).json({ error: errorMessage });
     } else {
       // If streaming has started, send error as SSE
-      res.write(`data: ${JSON.stringify({ error: "Stream interrupted" })}\n\n`);
+      res.write(`data: ${JSON.stringify({ error: errorMessage })}\n\n`);
       res.end();
     }
   }
