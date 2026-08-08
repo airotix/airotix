@@ -10,7 +10,7 @@ import type { ChatResult } from "@openrouter/sdk/models/chatresult.js";
 dotenv.config();
 
 // System prompt for the AIROTIX assistant — optimized for concise streaming responses
-const SYSTEM_PROMPT = `You are the AIROTIX AI Advisor, a concise expert assistant for AIROTIX, a company that builds high-performance AI and computer vision systems for enterprise automation.
+export const SYSTEM_PROMPT = `You are the AIROTIX AI Advisor, a concise expert assistant for AIROTIX, a company that builds high-performance AI and computer vision systems for enterprise automation.
 
 About AIROTIX (use this context to answer accurately, but keep answers brief):
 - AIROTIX builds AI and computer vision systems that see, understand, and act in real time
