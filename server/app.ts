@@ -39,6 +39,20 @@ function isEventStream(
   );
 }
 
+// Type guard: check if the response is a non-streaming ChatResult
+function isChatResult(
+  value: ChatResult | EventStream<ChatStreamChunk>
+): value is ChatResult {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    Array.isArray((value as ChatResult).choices)
+  );
+}
+
+// Detect if running on Vercel serverless (Vercel sets this env var automatically)
+const IS_VERCEL = process.env.VERCEL === "1";
+
 // Create the Express app (shared between local server and Vercel serverless)
 export function createApp() {
   const app = express();
@@ -75,18 +89,21 @@ export function createApp() {
       // Prepend system prompt
       const fullMessages = [{ role: "system", content: SYSTEM_PROMPT }, ...messages];
 
-      // Stream the response from OpenRouter
+      // On Vercel serverless, use non-streaming mode (streaming is unreliable on serverless).
+      // Locally, keep streaming for a nicer UX.
+      const useStreaming = !IS_VERCEL;
+
+      // Send the request to OpenRouter
       const response = await openrouter.chat.send({
         chatRequest: {
           model: "openai/gpt-oss-20b:free",
           messages: fullMessages,
-          stream: true,
+          stream: useStreaming,
         },
       });
 
-      // Handle streaming response
-      if (isEventStream(response)) {
-        // Use the reader API to iterate over the stream
+      if (useStreaming && isEventStream(response)) {
+        // Streaming mode (local) — iterate over the stream
         const reader = response.getReader();
 
         while (true) {
@@ -106,8 +123,8 @@ export function createApp() {
             }
           }
         }
-      } else {
-        // Non-streaming response (fallback - API returned ChatResult instead of stream)
+      } else if (isChatResult(response)) {
+        // Non-streaming mode (Vercel or fallback) — send the full content as one chunk
         const content = response.choices?.[0]?.message?.content;
         if (content) {
           res.write(`data: ${JSON.stringify({ content })}\n\n`);
