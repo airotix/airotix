@@ -1,0 +1,690 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 15 13% 8%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 15 13% 8%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 25 100% 41%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 0%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 25 100% 41%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 25 100% 41%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    @apply m-0 p-0 overflow-x-hidden;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body {
+    @apply bg-black text-white font-space;
+  }
+}
+
+.section-container {
+  @apply w-full px-4 sm:px-6 lg:px-8 py-12;
+}
+
+.hover-lift {
+  @apply transition-transform duration-300;
+}
+
+.hover-lift:hover {
+  @apply transform -translate-y-1;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Banner styles */
+.banner-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+  z-index: 10;
+}
+
+.banner-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .banner-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: 1.5rem;
+  }
+}
+
+.banner-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  max-width: 90%;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .banner-subtitle {
+    max-width: 800px;
+  }
+}
+
+/* Animation classes */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate-float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(10deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes pulse-line {
+  0% {
+    opacity: 0.3;
+    stroke-width: 1px;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 2px;
+  }
+  100% {
+    opacity: 0.3;
+    stroke-width: 1px;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.section-heading-pattern {
+  position: relative;
+}
+
+.section-heading-pattern::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(45deg, rgba(255, 107, 53, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px, 64px 64px, 120px 120px;
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section-heading-pattern > * {
+  position: relative;
+  z-index: 1;
+}
+
+.animation-delay-100 {
+  animation-delay: 100ms !important;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms !important;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms !important;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms !important;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms !important;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-circle {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-line {
+  animation: pulse-line 4s ease-in-out infinite;
+}
+
+.animate-rotate {
+  animation: rotate 20s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.6s ease-out forwards;
+}
+
+/* Hover animations */
+.hover-underline {
+  position: relative;
+}
+
+.hover-underline:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+.hover-underline:hover:after {
+  width: 100%;
+}
+
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* New pulse animation */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+/* ===========================
+   Premium Hero Background Utilities
+   =========================== */
+
+/* Keep Spline canvas centered and softly scaled inside its column so
+   floating stat cards have breathing room around it. */
+.spline-scale {
+  transform: scale(1.05);
+  transform-origin: center;
+}
+
+@media (min-width: 640px) {
+  .spline-scale {
+    transform: scale(1.12);
+  }
+}
+
+@media (min-width: 1024px) {
+  .spline-scale {
+    transform: scale(1.2);
+  }
+}
+
+/* Animatable focus radius for the cursor-follow reveal on the hero brain. */
+@property --focus-r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* Depth + focus overlay sitting on top of the background brain.
+   By default it blurs and darkens the brain (pushing it back). A soft
+   circle that follows the cursor (via --mx/--my/--focus-r set in JS)
+   is masked out, revealing the sharp, animated brain around the pointer. */
+.brain-depth-overlay {
+  --mx: 50%;
+  --my: 40%;
+  --focus-r: 0px;
+  backdrop-filter: blur(8px) brightness(0.62) saturate(0.9);
+  -webkit-backdrop-filter: blur(8px) brightness(0.62) saturate(0.9);
+  background: rgba(0, 0, 0, 0.32);
+  transition: --focus-r 0.4s ease, background 0.4s ease;
+  -webkit-mask-image: radial-gradient(
+    circle var(--focus-r) at var(--mx) var(--my),
+    transparent 0%,
+    transparent 55%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--focus-r) at var(--mx) var(--my),
+    transparent 0%,
+    transparent 55%,
+    #000 100%
+  );
+}
+
+@media (hover: none) {
+  /* Touch devices have no cursor — keep the brain gently in the background. */
+  .brain-depth-overlay {
+    backdrop-filter: blur(7px) brightness(0.68);
+    -webkit-backdrop-filter: blur(7px) brightness(0.68);
+  }
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 138, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 138, 0, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+}
+
+.hero-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 138, 0, 0.18);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-card-strong {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 138, 0, 0.22);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.text-gradient-orange {
+  background: linear-gradient(92deg, #FF8A00 0%, #FFB347 45%, #FF8A00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Spline animation container styles */
+
+
+/* Make Spline animation smaller on iPad and tablet screens */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .spline-container {
+    transform: scale(0.80);
+    transform-origin: center;
+  }
+}
+
+/* Hide Spline watermark */
+.spline-watermark,
+[class*="watermark"],
+[id*="watermark"],
+a[href*="spline.design"],
+[class*="spline-logo"],
+[id*="spline-logo"],
+[class*="spline"][class*="logo"],
+[class*="built"][class*="spline"],
+div[style*="position: absolute"][style*="bottom"],
+div[style*="position: fixed"][style*="bottom"],
+canvas + div,
+canvas ~ div,
+.spline-viewer div[style*="position: absolute"],
+.spline-viewer div[style*="bottom"],
+.spline-viewer a,
+[data-spline-watermark],
+[data-spline-logo] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
+
+/* Additional watermark hiding for canvas siblings */
+canvas + *,
+canvas ~ * {
+  position: relative;
+}
+
+canvas + *:last-child,
+canvas ~ *:last-child {
+  display: none !important;
+}
+/* Responsive Design for <= 786px */
+@media (max-width: 786px) {
+
+  /* Reduce padding globally for sections */
+  .section-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  /* Banner text sizes */
+  .banner-title {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .banner-subtitle {
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    max-width: 95%;
+  }
+
+  /* Adjust overlay padding for very small screens */
+  .banner-overlay {
+    padding: 0.5rem;
+  }
+
+  /* Hover effects disabled on touch devices */
+  .hover-lift:hover,
+  .hover-scale:hover,
+  .hover-underline:hover:after {
+    transform: none;
+    width: 0;
+  }
+
+  /* Reduce animation distance on mobile so it feels natural */
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Make fade-in animation softer on small screens */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Extra responsive softening for <= 480px */
+@media (max-width: 480px) {
+
+  .banner-title {
+    font-size: clamp(1.2rem, 7vw, 1.6rem);
+  }
+
+  .banner-subtitle {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .section-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+/* ===========================
+   1300px - Large Screens
+   =========================== */
+   @media (max-width: 1300px) {
+    .banner-title {
+      font-size: clamp(2.2rem, 4vw, 3rem);
+    }
+  
+    .banner-subtitle {
+      max-width: 700px;
+    }
+  
+    .section-container {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+  }
+  
+  
+  /* ===========================
+     900px - Tablets & Small Laptops
+     =========================== */
+  @media (max-width: 900px) {
+  
+    .banner-title {
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+    }
+  
+    .banner-subtitle {
+      font-size: clamp(0.95rem, 3vw, 1.1rem);
+      max-width: 90%;
+    }
+  
+    .section-container {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      padding-top: 2.5rem;
+      padding-bottom: 2.5rem;
+    }
+  
+    /* Slightly reduce floating animation range */
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+  }
+  
+  
+  /* ===========================
+     786px - Mobile Landscape / Phablets
+     =========================== */
+  @media (max-width: 786px) {
+  
+    .section-container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+  
+    .banner-title {
+      font-size: clamp(1.4rem, 6vw, 2rem);
+      margin-bottom: 0.75rem;
+    }
+  
+    .banner-subtitle {
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      max-width: 95%;
+    }
+  
+    .banner-overlay {
+      padding: 0.5rem;
+    }
+  
+    /* Disable hover effects on touch devices */
+    .hover-lift:hover,
+    .hover-scale:hover,
+    .hover-underline:hover:after {
+      transform: none;
+      width: 0;
+    }
+  
+    /* Softer floating animation */
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+      100% { transform: translateY(0); }
+    }
+  
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+  
+  @media (max-width: 1300px) {
+
+    /* Banner text adjustments */
+    .banner-title {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+    }
+  
+    .banner-subtitle {
+      max-width: 750px;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+    }
+  
+    /* Reduce animation intensity for large screens */
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); } /* previously larger */
+      100% { transform: translateY(0); }
+    }
+  
+    @keyframes rotate {
+      from { transform: rotate(0deg) scale(0.98); }
+      to { transform: rotate(360deg) scale(0.98); } /* slightly smaller size */
+    }
+  
+    @keyframes pulse-line {
+      0% { opacity: 0.3; stroke-width: 0.8px; }
+      50% { opacity: 1; stroke-width: 1.5px; }
+      100% { opacity: 0.3; stroke-width: 0.8px; }
+    }
+  
+    /* Slight scale reduction for floating circles/objects */
+    .animate-float,
+    .animate-circle,
+    .animate-rotate {
+      transform: scale(0.92);
+    }
+  }
+  
+  
+  /* ===========================
+     480px - Small Phones
+     =========================== */
+  @media (max-width: 480px) {
+  
+    .banner-title {
+      font-size: clamp(1.2rem, 7vw, 1.6rem);
+    }
+  
+    .banner-subtitle {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+  
+    .section-container {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
+  }
+  

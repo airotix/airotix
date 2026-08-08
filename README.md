@@ -1,69 +1,121 @@
-# Welcome to your Lovable project
+# AIROTIX Website
 
-## Project info
+AIROTIX is a company that builds high-performance AI and computer vision systems for enterprise automation. This repository contains the AIROTIX marketing website with an integrated AI chatbot advisor.
 
-**URL**: https://lovable.dev/projects/ec1d4f1e-2506-4da5-a91b-34afa90cceb6
+## Tech Stack
 
-## How can I edit this code?
+- **Frontend**: Vite + React + TypeScript + Tailwind CSS + shadcn/ui
+- **Backend**: Express + OpenRouter SDK (AI chatbot)
+- **Deployment**: Vercel (frontend + serverless API)
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ec1d4f1e-2506-4da5-a91b-34afa90cceb6) and start prompting.
+- Node.js (v18+)
+- npm
+- An [OpenRouter API key](https://openrouter.ai/keys)
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Create your environment file
+cp .env.example .env
+# Then edit .env and add your OpenRouter API key:
+# OPENROUTER_API_KEY=sk-or-v1-...
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Running Locally
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Run both the frontend and backend together:
+
+```sh
 npm run dev:all
 ```
 
-**Edit a file directly in GitHub**
+- **Frontend**: http://localhost:8080
+- **Backend (chatbot API)**: http://localhost:3001
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Or run them separately in two terminals:
 
-**Use GitHub Codespaces**
+```sh
+# Terminal 1 — Backend (chatbot server)
+npm run dev:server
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Terminal 2 — Frontend (website)
+npm run dev
+```
 
-## What technologies are used for this project?
+## Project Structure
 
-This project is built with .
+```
+├── api/                  # Vercel serverless function (chatbot API)
+│   └── index.ts
+├── server/               # Express backend
+│   ├── app.ts            # Shared Express app (used by local + Vercel)
+│   └── index.ts          # Local server entry point
+├── src/                  # React frontend
+│   ├── components/       # UI components (incl. ChatBot.tsx)
+│   ├── pages/            # Page components
+│   └── ...
+├── public/               # Static assets
+├── vercel.json           # Vercel configuration
+└── .env.example          # Environment variable template
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Chatbot
 
-## How can I deploy this project?
+The AIROTIX AI Advisor is a floating chat widget available on every page. It uses OpenRouter's `openai/gpt-oss-20b:free` model with a custom system prompt that keeps responses concise and on-brand.
 
-Simply open [Lovable](https://lovable.dev/projects/ec1d4f1e-2506-4da5-a91b-34afa90cceb6) and click on Share -> Publish.
+- **Frontend**: `src/components/ChatBot.tsx`
+- **Backend**: `server/app.ts` (system prompt + streaming logic)
 
-## I want to use a custom domain - is that possible?
+## Deploying to Vercel
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Option 1: Vercel Dashboard (recommended)
+
+1. Push this repository to GitHub.
+2. Go to [vercel.com](https://vercel.com) and click **Add New → Project**.
+3. Import your GitHub repository.
+4. Vercel will auto-detect the Vite framework. The `vercel.json` config handles the rest.
+5. **Add the environment variable** (Settings → Environment Variables):
+   - `OPENROUTER_API_KEY` = your OpenRouter API key
+6. Click **Deploy**.
+
+### Option 2: Vercel CLI
+
+```sh
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy (first time will prompt for setup)
+vercel
+
+# Set the environment variable
+vercel env add OPENROUTER_API_KEY production
+
+# Deploy to production
+vercel --prod
+```
+
+### How it works on Vercel
+
+- The frontend builds to `dist/` and is served as static files.
+- The `/api/*` routes are handled by the serverless function in `api/index.ts` (the Express app).
+- The `vercel.json` rewrite routes `/api/chat` and `/api/health` to the serverless function.
+- The `OPENROUTER_API_KEY` environment variable is injected at runtime.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start frontend dev server (port 8080) |
+| `npm run dev:server` | Start backend dev server (port 3001) |
+| `npm run dev:all` | Run both frontend + backend together |
+| `npm run build` | Build the site for production |
+| `npm run preview` | Preview the production build |
+| `npm run server` | Run the backend without watch mode |
+| `npm run lint` | Run ESLint |
