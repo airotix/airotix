@@ -28,7 +28,7 @@ const TechDetails = () => {
       <section className="pt-8 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
-            <Link to="/" className="inline-flex items-center text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+            <Link to="/" className="inline-flex items-center text-[#A8A8A8] hover:text-white mb-6 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Link>
@@ -41,7 +41,7 @@ const TechDetails = () => {
             y: 0
           }} transition={{
             duration: 0.5
-          }} className="text-3xl sm:text-4xl font-bold mb-6">
+          }} className="text-3xl sm:text-4xl font-bold mb-6 text-white">
               Technical Deep Dive
             </motion.h1>
             
@@ -53,7 +53,7 @@ const TechDetails = () => {
             }} transition={{
               duration: 0.5,
               delay: 0.2
-            }} className="text-base sm:text-lg text-gray-600 mb-12">
+            }} className="text-base sm:text-lg text-[#A8A8A8] mb-12">
                 Explore the technical details behind our computer vision technology and learn how our AI architecture enables rapid development and deployment of automation solutions.
               </motion.p>
               
@@ -68,11 +68,11 @@ const TechDetails = () => {
               duration: 0.6
             }} className="mb-16">
                 <div className="flex items-center gap-2 mb-4">
-                  <FileText className="w-5 h-5 text-gray-700" />
-                  <h2 className="text-2xl font-bold">System Architecture</h2>
+                  <FileText className="w-5 h-5 text-orange-300" />
+                  <h2 className="text-2xl font-bold text-white">System Architecture</h2>
                 </div>
                 
-                <p className="text-gray-600 mb-8 text-base max-w-3xl">
+                <p className="text-[#A8A8A8] mb-8 text-base max-w-3xl">
                   Our platform uses a three-tier architecture connecting camera systems to our AI cloud services and user applications. 
                   The diagram below illustrates how visual data flows through our system, from image capture to intelligent insights.
                 </p>
@@ -84,7 +84,7 @@ const TechDetails = () => {
                 </div>
                 
                 {/* Product Platform Architecture Diagram */}
-                <Card className="bg-white rounded-lg mb-10 border border-gray-200 shadow-sm">
+                <Card className="bg-[#0d0d0f] rounded-2xl mb-10 border border-white/[0.08] shadow-sm">
                   <CardContent className="p-4 lg:p-6">
                     <ProductPlatform />
                   </CardContent>
@@ -103,11 +103,11 @@ const TechDetails = () => {
               delay: 0.2
             }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <Code className="w-5 h-5 text-gray-700" />
-                  <h2 className="text-2xl font-bold">Our Approach</h2>
+                  <Code className="w-5 h-5 text-orange-300" />
+                  <h2 className="text-2xl font-bold text-white">Our Approach</h2>
                 </div>
                 
-                <p className="text-gray-600 mb-8 text-base max-w-3xl">
+                <p className="text-[#A8A8A8] mb-8 text-base max-w-3xl">
                   At AIROTIX, we've developed a systematic approach to creating computer vision solutions that combines technical innovation with practical implementation. 
                   Our comprehensive development process ensures that every project moves efficiently from concept to production-ready AI system.
                 </p>
@@ -115,15 +115,15 @@ const TechDetails = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                   {[{
                   title: "Discovery",
-                  icon: <Cpu className="w-5 h-5 text-gray-700" />,
+                  icon: <Cpu className="w-5 h-5 text-orange-300" />,
                   description: "We begin with thorough market research and requirements gathering to understand your specific needs and opportunities."
                 }, {
                   title: "Design & Prototyping",
-                  icon: <Code className="w-5 h-5 text-gray-700" />,
+                  icon: <Code className="w-5 h-5 text-orange-300" />,
                   description: "Our teams create initial designs and functional prototypes that allow for early testing and iteration."
                 }, {
                   title: "Development & Testing",
-                  icon: <FileText className="w-5 h-5 text-gray-700" />,
+                  icon: <FileText className="w-5 h-5 text-orange-300" />,
                   description: "We rigorously develop and test all components to ensure they meet performance and reliability standards."
                 }].map((phase, i) => <motion.div key={phase.title} initial={{
                   opacity: 0,
@@ -134,19 +134,19 @@ const TechDetails = () => {
                 }} transition={{
                   duration: 0.4,
                   delay: 0.3 + i * 0.1
-                }} className="bg-gray-50 p-6 rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300">
+                }} className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-xl hover:border-orange-300/30 hover:shadow-[0_0_40px_rgba(249,115,22,0.1)] transition-all duration-300">
                       <div className="flex items-center gap-2 mb-3">
                         {phase.icon}
-                        <h3 className="font-semibold text-lg">{phase.title}</h3>
+                        <h3 className="font-semibold text-lg text-white">{phase.title}</h3>
                       </div>
-                      <p className="text-gray-600 text-base">{phase.description}</p>
+                      <p className="text-[#A8A8A8] text-base">{phase.description}</p>
                     </motion.div>)}
                 </div>
               </motion.div>
             </div>
             
-            <div className="mt-16 pt-8 border-t border-gray-200">
-              <Link to="/development-process" className="inline-flex items-center px-5 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all group">
+            <div className="mt-16 pt-8 border-t border-white/[0.08]">
+              <Link to="/development-process" className="inline-flex items-center px-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black font-semibold hover:-translate-y-0.5 hover:shadow-[0_14px_44px_rgba(249,115,22,0.5)] transition-all group">
                 Explore Our Development Process
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>

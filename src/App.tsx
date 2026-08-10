@@ -17,6 +17,12 @@ const Insights = lazy(() => import("./pages/Insights"));
 const CaseStudies = lazy(() => import("./pages/CaseStudies"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const PreduitRedirect = lazy(() => import("./pages/PreduitRedirect"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPostDetail = lazy(() => import("./pages/BlogPostDetail"));
+const Careers = lazy(() => import("./pages/Careers"));
+const Projects = lazy(() => import("./pages/Projects"));
+const TechDetails = lazy(() => import("./pages/TechDetails"));
+const DevelopmentProcess = lazy(() => import("./pages/DevelopmentProcess"));
 
 // Loading fallback component
 const LoadingFallback = () => (
@@ -53,6 +59,12 @@ const App = () => {
               <Route path="/industries" element={<Industries />} />
               <Route path="/insights" element={<Insights />} />
               <Route path="/case-studies" element={<CaseStudies />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPostDetail />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/tech-details" element={<TechDetails />} />
+              <Route path="/development-process" element={<DevelopmentProcess />} />
               <Route path="/preduit" element={<PreduitRedirect />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />

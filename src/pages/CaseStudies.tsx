@@ -170,7 +170,7 @@ const cases: CaseStudy[] = [
       "$2.1M annual savings in waste reduction",
       "Real-time visibility across all locations"
     ],
-    productUrl: "/preduit",
+    productUrl: "https://preduit-lp-ten.vercel.app/",
   },
   {
     title: "Nuvantica: Clinical Trial Study Management Platform",

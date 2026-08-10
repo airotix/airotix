@@ -1,23 +1,32 @@
 # AIROTIX Web — Page Guide
 
-This document describes each route in the app, what appears on the page, and the main content blocks. Routing is defined in `src/App.jsx` using React Router.
+This document describes each route in the app, what appears on the page, and the main content blocks. Routing is defined in `src/App.tsx` using React Router.
 
 | Route | Component | Browser title |
 |-------|-----------|---------------|
-| `/` | `Home` | AIROTIX \| AI Solutions & Automation |
+| `/` | `Index` | AIROTIX \| AI Solutions & Automation |
 | `/about` | `About` | AIROTIX \| About Us |
 | `/services` | `Services` | AIROTIX \| Services |
 | `/industries` | `Industries` | AIROTIX \| Industries |
 | `/insights` | `Insights` | AIROTIX \| Insights |
 | `/case-studies` | `CaseStudies` | AIROTIX \| Case Studies |
+| `/blog` | `Blog` | AIROTIX - News & Insights |
+| `/blog/:slug` | `BlogPostDetail` | Individual blog post |
+| `/careers` | `Careers` | AIROTIX \| Join Our Team |
+| `/projects` | `Projects` | AIROTIX \| Projects |
+| `/tech-details` | `TechDetails` | AIROTIX \| Technical Deep Dive |
+| `/development-process` | `DevelopmentProcess` | AIROTIX \| Development Process |
+| `/preduit` | `PreduitRedirect` | Redirects to external Preduit site |
+| `/privacy-policy` | `PrivacyPolicy` | AIROTIX \| Privacy Policy |
+| `*` | `NotFound` | 404 |
 
-On every navigation, the app scrolls to the top (`ScrollToTop` in `App.jsx`).
+On every navigation, the app scrolls to the top (`PageLayout` / `SubpageLayout`).
 
 ---
 
 ## Home (`/`)
 
-The main marketing landing page (`src/pages/Home.jsx`, styles in `src/styles/home.css`). Includes a full site nav (desktop + hamburger mobile menu) linking to all other pages, `#contact`, and a primary “Get Started” CTA.
+The main marketing landing page (`src/pages/Index.tsx`). Uses the shared `PageLayout` with the global navbar and footer. Includes a full site nav (desktop + hamburger mobile menu) linking to all other pages, `#contact`, and a primary “Book a Strategy Call” CTA.
 
 ### Sections (in order)
 
@@ -64,7 +73,7 @@ The main marketing landing page (`src/pages/Home.jsx`, styles in `src/styles/hom
 
 ## About Us (`/about`)
 
-Subpage layout: top bar with logo → home and “Back to Home” (`src/pages/About.jsx`, `aboutPage.css`).
+Subpage layout: top bar with logo → home and “Back to Home” (`src/pages/About.tsx`).
 
 ### Content
 
@@ -84,7 +93,7 @@ No footer duplicate of the home page; navigation is only the subpage header.
 
 ## Services (`/services`)
 
-Top bar same pattern as About (`servicesPage.css`).
+Top bar same pattern as About.
 
 ### Content
 
@@ -100,7 +109,7 @@ Top bar same pattern as About (`servicesPage.css`).
 
 ## Industries (`/industries`)
 
-Top bar + “Back to Home” (`industriesPage.css`).
+Top bar + “Back to Home”.
 
 ### Content
 
@@ -116,7 +125,7 @@ Top bar + “Back to Home” (`industriesPage.css`).
 
 ## Insights (`/insights`)
 
-Top bar with “Back to Home” (`insightsPage.css`).
+Top bar with “Back to Home”.
 
 ### Content
 
@@ -132,7 +141,7 @@ Each card has a thumb emoji, category, title, excerpt, date, and placeholder rea
 
 ## Case Studies (`/case-studies`)
 
-Top bar with “Back to Home” (`caseStudiesPage.css`).
+Top bar with “Back to Home”.
 
 ### Content
 
