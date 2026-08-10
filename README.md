@@ -52,10 +52,11 @@ npm run dev
 ## Project Structure
 
 ```
-├── api/                  # Vercel serverless function (chatbot API)
-│   └── index.ts
-├── server/               # Express backend
-│   ├── app.ts            # Shared Express app (used by local + Vercel)
+├── api/                  # Vercel serverless functions
+│   ├── chat.ts           # Chatbot API (/api/chat) → OpenRouter
+│   └── index.ts          # Health check (/api)
+├── server/               # Express backend (local development)
+│   ├── app.ts            # Shared Express app + system prompt
 │   └── index.ts          # Local server entry point
 ├── src/                  # React frontend
 │   ├── components/       # UI components (incl. ChatBot.tsx)
@@ -104,8 +105,9 @@ vercel --prod
 ### How it works on Vercel
 
 - The frontend builds to `dist/` and is served as static files.
-- The `/api/*` routes are handled by the serverless function in `api/index.ts` (the Express app).
-- The `vercel.json` rewrite routes `/api/chat` and `/api/health` to the serverless function.
+- The `/api/chat` route is handled by the serverless function in `api/chat.ts`, which calls OpenRouter in non-streaming mode and formats the response as SSE so the ChatBot works unchanged.
+- The `/api` route is a health check in `api/index.ts`.
+- The `vercel.json` rewrites keep `/api/*` pointing at the serverless functions and route all other paths to `/index.html` for client-side routing.
 - The `OPENROUTER_API_KEY` environment variable is injected at runtime.
 
 ## Available Scripts
