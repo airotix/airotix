@@ -10,6 +10,10 @@ import { SYSTEM_PROMPT } from "../shared/system-prompt";
 // graceful error instead of hitting the platform hard timeout.
 const DEFAULT_TIMEOUT_MS = 25000;
 
+// Abuse-prevention limits for the public /api/chat endpoint.
+const MAX_MESSAGES = 20;          // Cap on message history depth
+const MAX_CONTENT_CHARS = 4000;   // Cap on a single message's content length
+
 // Type guard: check if the response is a non-streaming ChatResult
 function isChatResult(
   value: ChatResult | EventStream<ChatStreamChunk>
@@ -84,13 +88,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    // Basic validation: ensure messages are well-formed objects with role/content
+    if (messages.length === 0) {
+      return res.status(400).json({ error: "Messages array is required" });
+    }
+
+    if (messages.length > MAX_MESSAGES) {
+      return res.status(400).json({ error: "Too many messages" });
+    }
+
+    // Validate each message: well-formed, allowed role, reasonable size
+    const validRoles = new Set(["user", "assistant"]);
     const validMessages = messages.every(
       (m: any) =>
         m &&
         typeof m === "object" &&
         typeof m.role === "string" &&
-        typeof m.content === "string"
+        validRoles.has(m.role) &&
+        typeof m.content === "string" &&
+        m.content.length > 0 &&
+        m.content.length <= MAX_CONTENT_CHARS
     );
     if (!validMessages) {
       return res.status(400).json({ error: "Invalid message format" });
