@@ -3,7 +3,12 @@ import { OpenRouter } from "@openrouter/sdk";
 import type { ChatResult } from "@openrouter/sdk/models/chatresult.js";
 import type { EventStream } from "@openrouter/sdk/lib/event-streams.js";
 import type { ChatStreamChunk } from "@openrouter/sdk/models/chatstreamchunk.js";
-import { SYSTEM_PROMPT } from "../server/app";
+import { SYSTEM_PROMPT } from "../shared/system-prompt";
+
+// Default timeout for the AI provider request (ms).
+// Kept below Vercel's function duration limits so we can return a
+// graceful error instead of hitting the platform hard timeout.
+const DEFAULT_TIMEOUT_MS = 25000;
 
 // Type guard: check if the response is a non-streaming ChatResult
 function isChatResult(
@@ -45,6 +50,24 @@ async function sendWithRetry(
   throw lastError;
 }
 
+// Wrap a promise with a timeout so a slow AI provider returns a graceful
+// error instead of hanging until the platform kills the function.
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error("AI request timed out"));
+    }, timeoutMs);
+  });
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
 // Vercel serverless function for the AIROTIX chatbot at /api/chat.
 // Uses non-streaming mode (reliable on serverless) and formats the
 // response as SSE so the frontend ChatBot works unchanged.
@@ -59,6 +82,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: "Messages array is required" });
+    }
+
+    // Basic validation: ensure messages are well-formed objects with role/content
+    const validMessages = messages.every(
+      (m: any) =>
+        m &&
+        typeof m === "object" &&
+        typeof m.role === "string" &&
+        typeof m.content === "string"
+    );
+    if (!validMessages) {
+      return res.status(400).json({ error: "Invalid message format" });
     }
 
     if (!process.env.OPENROUTER_API_KEY) {
@@ -81,11 +116,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     // Non-streaming request (reliable on serverless) with retry on rate limits
-    const response = await sendWithRetry(openrouter, {
-      model: "openai/gpt-oss-20b:free",
-      messages: fullMessages,
-      stream: false,
-    });
+    // and a timeout so we never hang past the platform limit.
+    const timeoutMs = Number(process.env.CHAT_TIMEOUT_MS) || DEFAULT_TIMEOUT_MS;
+    const response = await withTimeout(
+      sendWithRetry(openrouter, {
+        model: "openai/gpt-oss-20b:free",
+        messages: fullMessages,
+        stream: false,
+      }),
+      timeoutMs
+    );
 
     // Send the full content as a single SSE chunk
     if (isChatResult(response)) {
@@ -116,6 +156,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       errorMessage = "The AI service rejected the request. Please try a different question.";
     } else if (error?.message?.includes("fetch failed") || error?.code === "ECONNREFUSED") {
       errorMessage = "Could not reach the AI service. Please check your connection.";
+    } else if (error?.message?.includes("timed out")) {
+      errorMessage = "The AI service took too long to respond. Please try again.";
     }
 
     // If headers haven't been sent yet, send error as JSON

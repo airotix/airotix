@@ -5,8 +5,28 @@ AIROTIX is a company that builds high-performance AI and computer vision systems
 ## Tech Stack
 
 - **Frontend**: Vite + React + TypeScript + Tailwind CSS + shadcn/ui
-- **Backend**: Express + OpenRouter SDK (AI chatbot)
-- **Deployment**: Vercel (frontend + serverless API)
+- **Backend**: Vercel serverless functions + OpenRouter SDK (AI chatbot)
+- **Deployment**: Vercel (frontend + serverless API on the same domain)
+
+## Architecture
+
+The frontend and chatbot API are deployed together on Vercel under the same domain:
+
+```
+Browser
+   ↓
+/api/chat  (same-origin)
+   ↓
+Vercel serverless function (api/chat.ts)
+   ↓
+OpenRouter AI API
+   ↓
+Chatbot response
+```
+
+- The production website is served at `https://airotix.com`.
+- The chatbot calls `https://airotix.com/api/chat` (same-origin — no CORS needed).
+- There is **no** dependency on ngrok, localhost backend URLs, or a separate running server in production.
 
 ## Getting Started
 
@@ -39,6 +59,8 @@ npm run dev:all
 - **Frontend**: http://localhost:8080
 - **Backend (chatbot API)**: http://localhost:3001
 
+The Vite dev server proxies `/api/*` requests to the local Express server, so the frontend always calls `/api/chat` (same-origin) in both development and production.
+
 Or run them separately in two terminals:
 
 ```sh
@@ -52,27 +74,31 @@ npm run dev
 ## Project Structure
 
 ```
-├── api/                  # Vercel serverless functions
-│   ├── chat.ts           # Chatbot API (/api/chat) → OpenRouter
-│   └── index.ts          # Health check (/api)
-├── server/               # Express backend (local development)
-│   ├── app.ts            # Shared Express app + system prompt
-│   └── index.ts          # Local server entry point
-├── src/                  # React frontend
-│   ├── components/       # UI components (incl. ChatBot.tsx)
-│   ├── pages/            # Page components
+├── api/                      # Vercel serverless functions
+│   ├── chat.ts               # Chatbot API (/api/chat) → OpenRouter (production)
+│   └── index.ts              # Health check (/api)
+├── shared/                   # Code shared between serverless + local server
+│   └── system-prompt.ts      # AIROTIX AI Advisor system prompt
+├── server/                   # Express backend (LOCAL DEVELOPMENT ONLY)
+│   ├── app.ts                # Local Express app (streaming chat)
+│   └── index.ts              # Local server entry point
+├── src/                      # React frontend
+│   ├── components/           # UI components (incl. ChatBot.tsx)
+│   ├── pages/                # Page components
 │   └── ...
-├── public/               # Static assets
-├── vercel.json           # Vercel configuration
-└── .env.example          # Environment variable template
+├── public/                   # Static assets
+├── vercel.json               # Vercel configuration
+└── .env.example              # Environment variable template
 ```
 
 ## Chatbot
 
 The AIROTIX AI Advisor is a floating chat widget available on every page. It uses OpenRouter's `openai/gpt-oss-20b:free` model with a custom system prompt that keeps responses concise and on-brand.
 
-- **Frontend**: `src/components/ChatBot.tsx`
-- **Backend**: `server/app.ts` (system prompt + streaming logic)
+- **Frontend**: `src/components/ChatBot.tsx` — calls `/api/chat` (same-origin)
+- **Production API**: `api/chat.ts` — Vercel serverless function (non-streaming, SSE-formatted)
+- **Local API**: `server/app.ts` — Express server (streaming) for development only
+- **Shared prompt**: `shared/system-prompt.ts` — used by both
 
 ## Deploying to Vercel
 
@@ -83,7 +109,7 @@ The AIROTIX AI Advisor is a floating chat widget available on every page. It use
 3. Import your GitHub repository.
 4. Vercel will auto-detect the Vite framework. The `vercel.json` config handles the rest.
 5. **Add the environment variable** (Settings → Environment Variables):
-   - `OPENROUTER_API_KEY` = your OpenRouter API key
+   - `OPENROUTER_API_KEY` = your OpenRouter API key (server-side only)
 6. Click **Deploy**.
 
 ### Option 2: Vercel CLI
@@ -108,7 +134,15 @@ vercel --prod
 - The `/api/chat` route is handled by the serverless function in `api/chat.ts`, which calls OpenRouter in non-streaming mode and formats the response as SSE so the ChatBot works unchanged.
 - The `/api` route is a health check in `api/index.ts`.
 - The `vercel.json` rewrites keep `/api/*` pointing at the serverless functions and route all other paths to `/index.html` for client-side routing.
-- The `OPENROUTER_API_KEY` environment variable is injected at runtime.
+- The `OPENROUTER_API_KEY` environment variable is injected at runtime and never exposed to the browser.
+
+## Environment Variables
+
+| Variable | Where | Purpose |
+|----------|-------|---------|
+| `OPENROUTER_API_KEY` | Server-side (Vercel env) | OpenRouter API key for the chatbot. **Never** prefix with `VITE_`. |
+| `CHAT_TIMEOUT_MS` | Server-side (optional) | Chat request timeout in ms (defaults to 25000). |
+| `PORT` | Local only | Local Express dev server port (defaults to 3001). |
 
 ## Available Scripts
 
